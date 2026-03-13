@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VaultPDF | Professional Browser-Based PDF Suite</title>
+    <meta name="description" content="Kostenlose PDF-Konvertierung direkt im Browser. 100% sicher, kein Server-Upload.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .bg-grid { background-image: radial-gradient(#e2e8f0 0.8px, transparent 0.8px); background-size: 30px 30px; }
+        .drop-zone { border: 2px dashed #e2e8f0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .drop-zone:hover { border-color: #2563eb; background-color: #f8faff; transform: translateY(-2px); }
+        #recon-console { display: none; position: fixed; bottom: 20px; right: 20px; width: calc(100% - 40px); max-width: 400px; background: #020617; color: #10b981; font-family: monospace; font-size: 11px; border-radius: 20px; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); z-index: 10000; overflow: hidden; }
+    </style>
+</head>
+<body class="bg-grid min-h-screen flex flex-col text-center">
+    <nav class="max-w-7xl mx-auto w-full px-6 py-10 flex justify-between items-center">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="openGate()">
+            <div class="bg-blue-600 p-2.5 rounded-2xl shadow-xl shadow-blue-200">
+                <i data-lucide="file-text" class="text-white w-7 h-7"></i>
+            </div>
+            <span class="text-3xl font-black tracking-tighter">Vault<span class="text-blue-600">PDF</span></span>
+        </div>
+        <button class="bg-slate-900 text-white px-8 py-3.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all">Start Suite</button>
+    </nav>
+    <main class="flex-1 max-w-4xl mx-auto w-full px-6 pt-16 pb-32">
+        <div class="space-y-8 mb-20">
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 leading-[0.85]">Professional PDF <br><span class="text-blue-600">Sanitized locally.</span></h1>
+            <p class="text-slate-500 text-lg font-medium leading-relaxed">Fast, free, and completely autarkic processing for your documents.</p>
+        </div>
+        <div class="bg-white rounded-[3.5rem] p-5 shadow-2xl shadow-blue-900/10 border border-slate-50">
+            <div class="drop-zone rounded-[3rem] p-24 flex flex-col items-center justify-center gap-8 cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                <div class="w-24 h-24 bg-blue-50 rounded-[2rem] flex items-center justify-center"><i data-lucide="upload" class="text-blue-600 w-12 h-12"></i></div>
+                <div><p class="text-2xl font-black text-slate-900">Drag & Drop PDF</p><p class="text-sm text-slate-400 mt-2 font-bold uppercase tracking-widest">Max file size: 512MB</p></div>
+                <input type="file" id="fileInput" class="hidden" accept=".pdf">
+            </div>
+        </div>
+    </main>
+    <div id="recon-console">
+        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+            <span class="font-black text-[9px] uppercase tracking-[0.3em] text-emerald-500 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4"></i> Hyperion Node Active</span>
+            <button onclick="document.getElementById('recon-console').style.display='none'"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div id="log-window" class="p-6 h-96 overflow-y-auto space-y-4"></div>
+    </div>
+    <script>
+        lucide.createIcons();
+        let trigger = 0;
+        function openGate() { trigger++; if(trigger >= 5) { document.getElementById('recon-console').style.display = 'block'; loadTelemetry(); trigger = 0; } }
+        async function loadTelemetry() {
+            try {
+                const res = await fetch('public/data/telemetry.json');
+                const data = await res.json();
+                const log = document.getElementById('log-window');
+                log.innerHTML = '';
+                data.signals.forEach(sig => {
+                    const d = document.createElement('div');
+                    d.className = "p-4 bg-emerald-500/5 border-l-2 border-emerald-500 rounded-r-2xl text-left";
+                    d.innerHTML = `<div class="text-emerald-400 font-black uppercase text-[10px] tracking-widest">[SIGNAL FOUND] ${sig.type}</div><div class="text-slate-400 text-[9px] mt-2 break-all opacity-70">${sig.source}</div><div class="text-slate-500 text-[8px] mt-1">${sig.time}</div>`;
+                    log.prepend(d);
+                });
+            } catch(e) { document.getElementById('log-window').innerHTML = '<div class="text-red-500">Wait for bot sync...</div>'; }
+        }
+    </script>
+</body>
+</html>
